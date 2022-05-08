@@ -1,0 +1,485 @@
+Found a 73 line (266 tokens) duplication in the following files: 
+Starting at line 41 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_1.java
+Starting at line 29 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_2.java
+
+	}
+
+	@DisplayName("Aniade una entrada con un tipo no valido")
+	@Test
+	void test_1_1() {
+		assertThrows(EmsInvalidTypeException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONAS;12121212R;Jessica;Diaz;jessica.diaz@ems.com;La calle de Jessica, 33;28033;25/01/1980",
+					false);
+		});
+		assertThrows(EmsInvalidTypeException.class, () -> {
+			contactosCovid.loadData("LOCALIZACIONA;12121212R;25/10/2021;23:41;41.3870;2.1698\n", false);
+		});
+	}
+
+	@DisplayName("Aniade una persona con número de datos no válidos")
+	@Test
+	void test_1_2() {
+		assertThrows(EmsInvalidNumberOfDataException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONA;12121212R;Jessica;Diaz;jessica.diaz@ems.com;La calle de Jessica, 33;28033;25/01/1980;extra de Jessica\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade localizacion con número de datos no validos")
+	@Test
+	void test_1_3() {
+		assertThrows(EmsInvalidNumberOfDataException.class, () -> {
+			contactosCovid.loadData("LOCALIZACION;extra de localizacion;12121212R;29/10/2020;13:41;41.3870;2.1698\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade persona que ya existe")
+	@Test
+	void test_1_5() {
+
+		assertThrows(EmsDuplicatePersonException.class, () -> {
+			contactosCovid.loadData(
+					"PERSONA;98765432J;Angel;Panizo;angel.panizo@ems.com;La calle de Angel, 46;28871;12/01/1995\n",
+					false);
+		});
+	}
+
+	@DisplayName("Aniade localización que ya existe")
+	@Test
+	void test_1_6() {
+		assertThrows(EmsDuplicateLocationException.class, () -> {
+			contactosCovid.loadData("LOCALIZACION;12121212R;25/10/2021;23:55;91.3971;12.1699\n", false);
+		});
+	}
+
+	@DisplayName("Aniade persona valida")
+	@Test
+	void test_1_7() throws EmsPersonNotFoundException {
+		try {
+			contactosCovid.loadData(
+					"PERSONA;12345678J;Juan Manuel;Garitagoitia;juanmanuel.garitagoitia@ems.com;La calle de Juanma, 225;28005;13/01/1972\n",
+					false);
+			Assertions.assertEquals(contactosCovid.findPersona("12345678J"), 3);
+		} catch (EmsInvalidTypeException | EmsInvalidNumberOfDataException | EmsDuplicatePersonException
+				| EmsDuplicateLocationException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al cargar una persona valida");
+		}
+	}
+
+	@DisplayName("Aniade localización valida")
+	@Test
+	void test_1_8() throws EmsLocalizationNotFoundException {
+		try {
+			contactosCovid.loadData("LOCALIZACION;12345678J;16/05/2021;01:45;54.3890;28.1698\n", false);
+=====================================================================
+Found a 57 line (252 tokens) duplication in the following files: 
+Starting at line 114 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_1.java
+Starting at line 99 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_2.java
+
+			Assertions.assertEquals(contactosCovid.findLocalizacion("12345678J", "16/05/2021", "01:45"), 5);
+		} catch (EmsInvalidTypeException | EmsInvalidNumberOfDataException | EmsDuplicatePersonException
+				| EmsDuplicateLocationException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al cargar una localizacion valida");
+		}
+	}
+
+	@DisplayName("Busca una persona que existe")
+	@Test
+	void test_1_9() throws EmsPersonNotFoundException {
+		assertEquals(contactosCovid.findPersona("12121212R"), 1);
+
+	}
+
+	@DisplayName("Busca una persona que no existe")
+	@Test
+	void test_1_10() throws EmsPersonNotFoundException {
+		assertThrows(EmsPersonNotFoundException.class, () -> {
+			assertEquals(contactosCovid.findPersona("00000000A"), -1);
+		});
+
+	}
+
+	@DisplayName("Obtiene localizaciones de una persona")
+	@Test
+	void test_1_11() throws EmsPersonNotFoundException {
+		try {
+			assertEquals(contactosCovid.localizacionPersona("12121212R").size(), 3);
+		} catch (EmsPersonNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@DisplayName("Obtiene localizaciones de una persona que no existe")
+	@Test
+	void test_1_12() throws EmsPersonNotFoundException {
+		assertThrows(EmsPersonNotFoundException.class, () -> {
+			assertEquals(contactosCovid.localizacionPersona("00000000A").size(), 3);
+		});
+	}
+
+	@DisplayName("Elimina una persona que no existe")
+	@Test
+	void test_1_13() throws EmsPersonNotFoundException {
+		assertThrows(EmsPersonNotFoundException.class, () -> {
+			contactosCovid.delPersona("00000000A");
+		});
+	}
+
+	@DisplayName("Elimina una persona que existe")
+	@Test
+	void test_1_14() throws EmsPersonNotFoundException {
+		contactosCovid.delPersona("98765432J");
+		assertEquals(contactosCovid.getPoblacion().getLista().size(), 1);
+	}
+}
+=====================================================================
+Found a 24 line (192 tokens) duplication in the following files: 
+Starting at line 285 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 102 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+
+	private FechaHora parsearFecha (String fecha) {
+		int dia, mes, anio;
+		String[] valores = fecha.split("\\/");
+		dia = Integer.parseInt(valores[0]);
+		mes = Integer.parseInt(valores[1]);
+		anio = Integer.parseInt(valores[2]);
+		FechaHora fechaHora = new FechaHora(dia, mes, anio, 0, 0);
+		return fechaHora;
+	}
+	
+	private FechaHora parsearFecha (String fecha, String hora) {
+		int dia, mes, anio;
+		String[] valores = fecha.split("\\/");
+		dia = Integer.parseInt(valores[0]);
+		mes = Integer.parseInt(valores[1]);
+		anio = Integer.parseInt(valores[2]);
+		int minuto, segundo;
+		valores = hora.split("\\:");
+		minuto = Integer.parseInt(valores[0]);
+		segundo = Integer.parseInt(valores[1]);
+		FechaHora fechaHora = new FechaHora(dia, mes, anio, minuto, segundo);
+		return fechaHora;
+	}
+}
+=====================================================================
+Found a 22 line (155 tokens) duplication in the following files: 
+Starting at line 69 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 120 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+
+		String datas[] = dividirEntrada(data);
+		for (String linea : datas) {
+			String datos[] = this.dividirLineaData(linea);
+			if (!datos[0].equals("PERSONA") && !datos[0].equals("LOCALIZACION")) {
+				throw new EmsInvalidTypeException();
+			}
+			if (datos[0].equals("PERSONA")) {
+				if (datos.length != Constantes.MAX_DATOS_PERSONA) {
+					throw new EmsInvalidNumberOfDataException("El número de datos para PERSONA es menor de 8");
+				}
+				this.poblacion.addPersona(this.crearPersona(datos));
+			}
+			if (datos[0].equals("LOCALIZACION")) {
+				if (datos.length != Constantes.MAX_DATOS_LOCALIZACION) {
+					throw new EmsInvalidNumberOfDataException("El número de datos para LOCALIZACION es menor de 6");
+				}
+				PosicionPersona pp = this.crearPosicionPersona(datos);
+				this.localizacion.addLocalizacion(pp);
+				this.listaContactos.insertarNodoTemporal(pp);
+			}
+		}
+	}
+=====================================================================
+Found a 15 line (94 tokens) duplication in the following files: 
+Starting at line 30 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 65 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+				NodoPosicion npActual = aux.getListaCoordenadas();
+				NodoPosicion npAnt=null;		
+				boolean npEncontrado = false;
+				while (npActual!=null && !npEncontrado) {
+					if(npActual.getCoordenada().equals(p.getCoordenada())) {
+						npEncontrado=true;
+						npActual.setNumPersonas(npActual.getNumPersonas()+1);
+					}else {
+						npAnt = npActual;
+						npActual = npActual.getSiguiente();
+					}
+				}
+				if(!npEncontrado) {
+					NodoPosicion npNuevo = new NodoPosicion(p.getCoordenada(),1, null);
+					if(aux.getListaCoordenadas()==null)
+=====================================================================
+Found a 12 line (86 tokens) duplication in the following files: 
+Starting at line 147 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 171 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+	public int numPersonasEntreDosInstantes(FechaHora inicio, FechaHora fin) {
+		if(this.size==0)
+			return 0;
+		NodoTemporal aux = lista;
+		int cont = 0;
+		int a;
+		cont = 0;
+		while(aux!=null) {
+			if(aux.getFecha().compareTo(inicio)>=0 && aux.getFecha().compareTo(fin)<=0) {
+				NodoPosicion nodo = aux.getListaCoordenadas();
+				while(nodo!=null) {
+					cont = cont + nodo.getNumPersonas();
+=====================================================================
+Found a 8 line (69 tokens) duplication in the following files: 
+Starting at line 87 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 30 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\PosicionPersona.java
+
+	        FechaHora fecha = pp.getFechaPosicion();        
+	        cadena+=String.format("%02d/%02d/%04d;%02d:%02d;", 
+	        		fecha.getFecha().getDia(), 
+	        		fecha.getFecha().getMes(), 
+	        		fecha.getFecha().getAnio(),
+	        		fecha.getHora().getHora(),
+	        		fecha.getHora().getMinuto());
+	        cadena+=String.format("%.4f;%.4f\n", pp.getCoordenada().getLatitud(), 
+=====================================================================
+Found a 4 line (60 tokens) duplication in the following files: 
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 109 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+	void test_10 () throws EmsInvalidTypeException, EmsInvalidNumberOfDataException, EmsDuplicatePersonException, EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(25,5,2021,16,36);
+		FechaHora fin = new FechaHora(25,5,2021,16,36);
+		assertEquals(contactosCovid.getListaContactos().numNodosCoordenadaEntreDosInstantes(ini,fin), 3);		
+=====================================================================
+Found a 6 line (53 tokens) duplication in the following files: 
+Starting at line 70 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 88 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 31 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\PosicionPersona.java
+
+	        System.out.printf("%02d/%02d/%04d;%02d:%02d;", 
+	        		fecha.getFecha().getDia(), 
+	        		fecha.getFecha().getMes(), 
+	        		fecha.getFecha().getAnio(),
+	        		fecha.getHora().getHora(),
+	        		fecha.getHora().getMinuto());
+=====================================================================
+Found a 6 line (52 tokens) duplication in the following files: 
+Starting at line 285 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 295 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 102 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 112 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+
+	private FechaHora parsearFecha (String fecha) {
+		int dia, mes, anio;
+		String[] valores = fecha.split("\\/");
+		dia = Integer.parseInt(valores[0]);
+		mes = Integer.parseInt(valores[1]);
+		anio = Integer.parseInt(valores[2]);
+=====================================================================
+Found a 4 line (51 tokens) duplication in the following files: 
+Starting at line 84 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 109 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+	void test_9 () throws EmsInvalidTypeException, EmsInvalidNumberOfDataException, EmsDuplicatePersonException, EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(25,5,2021,16,36);
+		FechaHora fin = new FechaHora(25,5,2021,16,36);
+		assertEquals(contactosCovid.getListaContactos().numPersonasEntreDosInstantes(ini,fin), 4);		
+=====================================================================
+Found a 12 line (44 tokens) duplication in the following files: 
+Starting at line 40 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\Coordenada.java
+Starting at line 121 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\FechaHora.java
+
+		result = prime * result + Float.floatToIntBits(longitud);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+=====================================================================
+Found a 5 line (42 tokens) duplication in the following files: 
+Starting at line 96 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 90 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\Persona.java
+
+	        cadena+=String.format("%s,%s;", lista.get(i).getDireccion(), lista.get(i).getCp());	        
+	        // Fecha de nacimiento
+	        cadena+=String.format("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
+	        		fecha.getFecha().getMes(), 
+	        		fecha.getFecha().getAnio());
+=====================================================================
+Found a 3 line (39 tokens) duplication in the following files: 
+Starting at line 76 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 100 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+	void test_8 () throws EmsInvalidTypeException, EmsInvalidNumberOfDataException, EmsDuplicatePersonException, EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(25,5,2021,16,30);
+		FechaHora fin = new FechaHora(25,5,2021,16,30);
+=====================================================================
+Found a 4 line (34 tokens) duplication in the following files: 
+Starting at line 78 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 98 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	        System.out.printf("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
+	         fecha.getFecha().getMes(), 
+	         fecha.getFecha().getAnio());	        
+	    }
+=====================================================================
+Found a 3 line (33 tokens) duplication in the following files: 
+Starting at line 78 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\Persona.java
+
+	        System.out.printf("%02d/%02d/%04d\n", fecha.getFecha().getDia(), 
+	         fecha.getFecha().getMes(), 
+	         fecha.getFecha().getAnio());	        
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 137 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 206 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+		String cadena = aux.getFecha().getFecha().toString();
+		cadena+= ";" +  aux.getFecha().getHora().toString();
+		return cadena;
+	}
+=====================================================================
+Found a 2 line (32 tokens) duplication in the following files: 
+Starting at line 27 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Principal.java
+Starting at line 77 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+		FechaHora ini = new FechaHora(25,5,2021,16,30);
+		FechaHora fin = new FechaHora(25,5,2021,16,30);
+=====================================================================
+Found a 2 line (32 tokens) duplication in the following files: 
+Starting at line 202 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 206 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+			cadena += aux.getFecha().getFecha().toString();
+			cadena += ";" +  aux.getFecha().getHora().toString() + " ";
+=====================================================================
+Found a 5 line (30 tokens) duplication in the following files: 
+Starting at line 64 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 109 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+
+		if (reset) {
+			this.poblacion = new Poblacion();
+			this.localizacion = new Localizacion();
+			this.listaContactos = new ListaContactos();
+		}
+=====================================================================
+Found a 4 line (30 tokens) duplication in the following files: 
+Starting at line 70 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 88 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 78 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 98 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\Persona.java
+Starting at line 31 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\PosicionPersona.java
+
+	        System.out.printf("%02d/%02d/%04d;%02d:%02d;", 
+	        		fecha.getFecha().getDia(), 
+	        		fecha.getFecha().getMes(), 
+	        		fecha.getFecha().getAnio(),
+=====================================================================
+Found a 2 line (30 tokens) duplication in the following files: 
+Starting at line 67 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 87 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	    for(int i = 0; i < lista.size(); i++) {	    	
+	    	FechaHora fecha = lista.get(i).getFechaNacimiento();
+=====================================================================
+Found a 2 line (30 tokens) duplication in the following files: 
+Starting at line 137 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 202 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+		String cadena = aux.getFecha().getFecha().toString();
+		cadena+= ";" +  aux.getFecha().getHora().toString();
+=====================================================================
+Found a 9 line (30 tokens) duplication in the following files: 
+Starting at line 159 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+Starting at line 183 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\ListaContactos.java
+
+					nodo = nodo.getSiguiente();
+				}				
+				aux = aux.getSiguiente();
+			}else {
+				aux=aux.getSiguiente();
+			}
+		}
+		return cont;
+	}
+=====================================================================
+Found a 2 line (28 tokens) duplication in the following files: 
+Starting at line 27 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Principal.java
+Starting at line 101 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+		FechaHora ini = new FechaHora(25,5,2021,16,30);
+		FechaHora fin = new FechaHora(25,5,2021,16,30);
+=====================================================================
+Found a 5 line (27 tokens) duplication in the following files: 
+Starting at line 29 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 64 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+Starting at line 109 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\ContactosCovid.java
+
+	public ContactosCovid() {
+		this.poblacion = new Poblacion();
+		this.localizacion = new Localizacion();
+		this.listaContactos = new ListaContactos();
+	}
+=====================================================================
+Found a 8 line (25 tokens) duplication in the following files: 
+Starting at line 77 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Localizacion.java
+Starting at line 80 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	        		lista.get(i).getCoordenada().getLongitud());
+	    }
+	}
+
+	@Override
+	public String toString() {
+		String cadena = "";
+		for(int i = 0; i < this.lista.size(); i++) {
+=====================================================================
+Found a 1 line (25 tokens) duplication in the following files: 
+Starting at line 72 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	        System.out.printf("%s,%s;",lista.get(i).getApellidos(), lista.get(i).getNombre());	        
+=====================================================================
+Found a 1 line (25 tokens) duplication in the following files: 
+Starting at line 76 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+Starting at line 96 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\ems\covid\Poblacion.java
+
+	        System.out.printf("%s,%s;", lista.get(i).getDireccion(), lista.get(i).getCp());	        
+=====================================================================
+Found a 11 line (25 tokens) duplication in the following files: 
+Starting at line 37 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\Persona.java
+Starting at line 13 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\genericas\PosicionPersona.java
+Starting at line 15 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\main\java\com\practica\lista\NodoPersonas.java
+
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public String getEmail() {
+=====================================================================
+Found a 2 line (25 tokens) duplication in the following files: 
+Starting at line 76 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 84 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 92 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 100 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+Starting at line 109 of C:\Users\Sr.Ark\Desktop\Nueva carpeta (6)\ems2022_lab_3_mantenibilidad_iwt31-grupoiwt32_08-eaeda85bae97e494b67174dd16d7a8ba804f10c4\src\test\java\com\practica\ems\Test_3.java
+
+	void test_8 () throws EmsInvalidTypeException, EmsInvalidNumberOfDataException, EmsDuplicatePersonException, EmsDuplicateLocationException {
+		FechaHora ini = new FechaHora(25,5,2021,16,30);
